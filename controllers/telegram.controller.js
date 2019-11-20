@@ -4,12 +4,12 @@ import telegram from 'telegram-bot-api'
 import User from '../models/user.model'
 import Group from '../models/group.model'
 
-var api = new telegram({
+/*var api = new telegram({
     token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
     updates: {
         enabled: true
     }
-});
+});*/
 
 const telegramCtrl = {};
 
@@ -182,7 +182,7 @@ telegramCtrl.handlers = ()=>{
             }
         }
     });    
-    //this.handlers()
+    this.handlers()
 }
 
 
