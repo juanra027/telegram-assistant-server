@@ -182,7 +182,7 @@ telegramCtrl.handlers = ()=>{
             }
         }
     });    
-    this.handlers()
+    //this.handlers()
 }
 
 
