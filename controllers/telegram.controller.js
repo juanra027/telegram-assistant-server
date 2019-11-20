@@ -26,7 +26,7 @@ telegramCtrl.auth = (req,res)=>{
 
 
 telegramCtrl.sendMesage = (req,res)=>{
-    api.sendMessage({chat_id:"-322729484",text:req.body.message}).then(function(data)
+    api.sendMessage({chat_id:req.body.chat,text:req.body.message}).then(function(data)
     {
         res.status(200).json("data")
     });
