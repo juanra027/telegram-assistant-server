@@ -4,18 +4,27 @@ import telegram from 'telegram-bot-api'
 import User from '../models/user.model'
 import Group from '../models/group.model'
 
-var api = new telegram({
-    token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
-    updates: {
-        enabled: true
-}
-});
+var api;
 
 const telegramCtrl = {};
 
-telegramCtrl.helloWorld = (req,res)=>{
+telegramCtrl.startBot = (req,res)=>{
     //console.log(req)
+    api = new telegram({
+        token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
+        updates: {
+            enabled: true
+    }
+    });
+    telegramCtrl.handlers()
     res.status(200).data("helloWorld")
+    
+};
+telegramCtrl.stopBot = (req,res)=>{
+    //console.log(req)
+    //telegramCtrl.handlers()
+    api = null;
+    res.status(200).data("deleted")
     
 };
 
@@ -23,6 +32,7 @@ telegramCtrl.auth = (req,res)=>{
     //console.log(req)
     
 };
+
 
 
 telegramCtrl.sendMesage = (req,res)=>{
@@ -167,6 +177,6 @@ telegramCtrl.handlers = ()=>{
     
 }
 
-telegramCtrl.handlers()
+
 
 export default telegramCtrl
