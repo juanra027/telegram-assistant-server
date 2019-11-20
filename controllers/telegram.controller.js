@@ -94,7 +94,7 @@ telegramCtrl.handlers = ()=>{
             else if(message.text == '/addMe'){
                 try {
                     api.sendMessage({
-                        chat_id:message.from.id,
+                        chat_id:message.chat.id,
                         text:'You were added to the group :'+ message.chat.title+ '. Now you can use my Alxa Voice Commands'})
                 } catch (error) {
                     
