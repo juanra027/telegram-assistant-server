@@ -92,9 +92,14 @@ telegramCtrl.handlers = ()=>{
                     text:'Hello I´m Alexa Bot, you add me when created the group'})
             }
             else if(message.text == '/addMe'){
-                api.sendMessage({
-                    chat_id:message.from.id,
-                    text:'You were added to the group :'+ message.chat.title+ '. Now you can use my Alxa Voice Commands'})
+                try {
+                    api.sendMessage({
+                        chat_id:message.from.id,
+                        text:'You were added to the group :'+ message.chat.title+ '. Now you can use my Alxa Voice Commands'})
+                } catch (error) {
+                    
+                }
+                
             }
         }
     });
