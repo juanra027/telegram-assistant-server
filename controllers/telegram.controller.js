@@ -37,7 +37,7 @@ telegramCtrl.auth = async(req,res)=>{
         res.status(200).json({data:{name:user.name},message:"User Logged In"})
     }
     else{
-        res.status(200).json({message:"User does'nt exist"})
+        res.status(400).json({message:"User does'nt exist"})
     }
 };
 
@@ -175,13 +175,15 @@ telegramCtrl.handlers = ()=>{
                         chat_id:message.chat.id,
                         text:'You were added to the group :'+ message.chat.title+ '. Now you can use my Alxa Voice Commands'})
                 } catch (error) {
-                    
                 }
                 
             }
         }
     });    
-    this.handlers()
+    //this.handlers()
+}
+function q(){
+    
 }
 
 
