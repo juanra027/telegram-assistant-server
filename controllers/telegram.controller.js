@@ -38,11 +38,11 @@ telegramCtrl.sendPhoto = (req,res)=>{
         chat_id: req.body.chat,
         caption: req.body.menssage,
     
-        // you can also send file_id here as string (as described in telegram bot api documentation)
         photo: req.body.url
     })
     .then(function(data)
     {
+        res.status(200).json("data")
         console.log(util.inspect(data, false, null));
     });
 }
