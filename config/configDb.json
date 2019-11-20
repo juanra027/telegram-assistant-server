@@ -1,0 +1,10 @@
+{
+    "development": {
+        "PORT": 3000,
+        "MONGODB_URI": "mongodb+srv://alexa_server:1q2w3e4r@clustertelegramassistant-epyml.mongodb.net/alexa027_bot"
+    },
+    "production": {
+        "PORT": 80,
+        "MONGODB_URI": "mongodb://localhost:27017/alexa027_bot"
+    }
+}
