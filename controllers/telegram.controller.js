@@ -72,7 +72,7 @@ telegramCtrl.sendPhoto3 = (req,res)=>{
 
     let buf = Buffer.from(req.body.base64str, 'base64');
 
-    fs.writeFile(path.join("C:/Users/juanr/Pictures/", req.body.from+"_"+req.body.filename), buf, function(error) {
+    fs.writeFile(path.join(req.body.from+"_"+req.body.filename), buf, function(error) {
       if (error) {
         throw error;
       } else {
@@ -81,11 +81,11 @@ telegramCtrl.sendPhoto3 = (req,res)=>{
             caption: req.body.menssage,
         
             //photo: path.join("C:/Users/juanr/Pictures/", req.body.filename)
-            photo: path.join("C:/Users/juanr/Pictures/", req.body.from+"_"+req.body.filename)
+            photo: path.join(req.body.from+"_"+req.body.filename)
         })
         .then(function(data)
         {
-            fs.unlinkSync(path.join("C:/Users/juanr/Pictures/", req.body.from+"_"+req.body.filename))
+            fs.unlinkSync(path.join(req.body.from+"_"+req.body.filename))
             res.status(200).json("data")
         });
         console.log('File created from base64 string!');
