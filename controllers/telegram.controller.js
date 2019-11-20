@@ -4,12 +4,16 @@ import telegram from 'telegram-bot-api'
 import User from '../models/user.model'
 import Group from '../models/group.model'
 
-var api;
+var api = new telegram({
+    token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
+    updates: {
+        enabled: true
+    }
+});
 
 const telegramCtrl = {};
 
 telegramCtrl.startBot = (req,res)=>{
-    //console.log(req)
     api = new telegram({
         token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
         updates: {
@@ -17,20 +21,24 @@ telegramCtrl.startBot = (req,res)=>{
     }
     });
     telegramCtrl.handlers()
-    res.status(200).data("helloWorld")
+    res.status(200).json("bot started")
     
 };
 telegramCtrl.stopBot = (req,res)=>{
-    //console.log(req)
-    //telegramCtrl.handlers()
     api = null;
-    res.status(200).data("deleted")
+    res.status(200).json("bot deleted")
     
 };
 
-telegramCtrl.auth = (req,res)=>{
-    //console.log(req)
-    
+telegramCtrl.auth = async(req,res)=>{
+    let user = await User.findOne({_id: req.body.code})
+    console.log(user)
+    if(user){
+        res.status(200).json({data:{name:user.name},message:"User Logged In"})
+    }
+    else{
+        res.status(200).json({message:"User does'nt exist"})
+    }
 };
 
 
@@ -71,8 +79,6 @@ telegramCtrl.sendPhoto2 = (req,res)=>{
           res.status(200).json(base64)
         }
       });
-    var fs = require("fs");
-
 }
 
 telegramCtrl.sendPhoto3 = (req,res)=>{
@@ -103,6 +109,7 @@ telegramCtrl.sendPhoto3 = (req,res)=>{
     });
 
 }
+
 
 telegramCtrl.signUp = async(data)=>{
     let user = await User.findOne({_id: data._id})
@@ -173,8 +180,8 @@ telegramCtrl.handlers = ()=>{
                 
             }
         }
-    });
-    
+    });    
+    this.handlers()
 }
 
 
