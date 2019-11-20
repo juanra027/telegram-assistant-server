@@ -9,7 +9,7 @@ import telegramRoutes from './routes/telegram.routes'
 const app = express();
 
 //Settings
-app.set('port',process.env.PORT || 8080);
+app.set('port',process.env.PORT || 80);
 
 //middleware
 app.use(cors(/*{origin: ['https://web-game-fc8f9.firebaseapp.com','http://localhost:4200']}*/));
