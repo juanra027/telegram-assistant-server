@@ -13,8 +13,11 @@ var api = new telegram({
 
 const telegramCtrl = {};
 
-
-
+telegramCtrl.helloWorld = (req,res)=>{
+    //console.log(req)
+    res.status(200).data("helloWorld")
+    
+};
 
 telegramCtrl.auth = (req,res)=>{
     //console.log(req)
