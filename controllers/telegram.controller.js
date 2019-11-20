@@ -33,6 +33,20 @@ telegramCtrl.sendMesage = (req,res)=>{
     
 };
 
+telegramCtrl.sendPhoto = (req,res)=>{
+    api.sendPhoto({
+        chat_id: req.body.chat,
+        caption: req.body.menssage,
+    
+        // you can also send file_id here as string (as described in telegram bot api documentation)
+        photo: req.body.url
+    })
+    .then(function(data)
+    {
+        console.log(util.inspect(data, false, null));
+    });
+}
+
 telegramCtrl.signUp = async(data)=>{
     let user = await User.findOne({_id: data._id})
     console.log(user)

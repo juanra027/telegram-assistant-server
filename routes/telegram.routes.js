@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/auth', telegramCtrl.auth);
 router.post('/', telegramCtrl.helloWorld);
 router.post('/sendMessage', telegramCtrl.sendMesage);
+router.post('/sendPhoto', telegramCtrl.sendPhoto);
 
 
 export default router
