@@ -13,7 +13,7 @@ app.set('port',process.env.PORT || 3000);
 
 //middleware
 app.use(cors(/*{origin: ['https://web-game-fc8f9.firebaseapp.com','http://localhost:4200']}*/));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 //Routes
 app.use('/telegram', telegramRoutes)

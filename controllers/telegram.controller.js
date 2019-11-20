@@ -43,8 +43,55 @@ telegramCtrl.sendPhoto = (req,res)=>{
     .then(function(data)
     {
         res.status(200).json("data")
-        console.log(util.inspect(data, false, null));
     });
+}
+
+telegramCtrl.sendPhoto2 = (req,res)=>{
+    var Buffer = require('buffer').Buffer;
+    var path = require('path');
+    var fs = require('fs');
+
+    fs.readFile(path.join("C:/Users/juanr/Pictures/72402.jpg"),function(error,data){
+        if(error){
+          throw error;
+        }else{
+          var buf = Buffer.from(data);
+          var base64 = buf.toString('base64');
+          //console.log('Base64 of ddr.jpg :' + base64);
+          res.status(200).json(base64)
+        }
+      });
+    var fs = require("fs");
+
+}
+
+telegramCtrl.sendPhoto3 = (req,res)=>{
+    var Buffer = require('buffer').Buffer;
+    var path = require('path');
+    var fs = require('fs');
+
+    let buf = Buffer.from(req.body.base64str, 'base64');
+
+    fs.writeFile(path.join("C:/Users/juanr/Pictures/", req.body.from+"_"+req.body.filename), buf, function(error) {
+      if (error) {
+        throw error;
+      } else {
+        api.sendPhoto({
+            chat_id: req.body.chat,
+            caption: req.body.menssage,
+        
+            //photo: path.join("C:/Users/juanr/Pictures/", req.body.filename)
+            photo: path.join("C:/Users/juanr/Pictures/", req.body.from+"_"+req.body.filename)
+        })
+        .then(function(data)
+        {
+            fs.unlinkSync(path.join("C:/Users/juanr/Pictures/", req.body.from+"_"+req.body.filename))
+            res.status(200).json("data")
+        });
+        console.log('File created from base64 string!');
+      }
+    });
+
 }
 
 telegramCtrl.signUp = async(data)=>{
