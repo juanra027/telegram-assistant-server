@@ -32,7 +32,6 @@ telegramCtrl.stopBot = (req,res)=>{
 
 telegramCtrl.auth = async(req,res)=>{
     let user = await User.findOne({_id: req.body.code})
-    console.log(user)
     if(user){
         res.status(200).json({data:{name:user.name},message:"User Logged In"})
     }
@@ -172,9 +171,12 @@ telegramCtrl.handlers = ()=>{
             else if(message.text == '/addMe'){
                 try {
                     api.sendMessage({
-                        chat_id:message.chat.id,
+                        chat_id:message.from.id,
                         text:'You were added to the group :'+ message.chat.title+ '. Now you can use my Alxa Voice Commands'})
                 } catch (error) {
+                    api.sendMessage({
+                        chat_id:message.chat.id,
+                        text:'You first need to start a private chat with me: Alexa027_bot'})
                 }
                 
             }
