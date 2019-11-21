@@ -34,7 +34,9 @@ telegramCtrl.auth = async(req,res)=>{
     let user = await User.findOne({_id: req.body.code})
     if(user){
         let groupsData=[];
-        for (let index = 0; index < user.groups; index++) {
+        console.log(user)
+        for (let index = 0; index < user.groups.length; index++) {
+            console.log('group = '+user.groups[index])
             let group = await Group.findOne({_id: user.groups[index]})
             console.log(group)
             if(group){
