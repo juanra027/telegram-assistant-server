@@ -86,7 +86,7 @@ telegramCtrl.sendPhoto = (req,res)=>{
     });
 }
 
-telegramCtrl.sendPhoto2 = (req,res)=>{
+telegramCtrl.sendPhoto2 = (req,res)=>{//convert a local photo to base 64
     var Buffer = require('buffer').Buffer;
     var path = require('path');
     var fs = require('fs');
@@ -103,7 +103,7 @@ telegramCtrl.sendPhoto2 = (req,res)=>{
       });
 }
 
-telegramCtrl.sendPhoto3 = (req,res)=>{
+telegramCtrl.sendPhoto3 = (req,res)=>{// convert a base 64 to an photo
     var Buffer = require('buffer').Buffer;
     var path = require('path');
     var fs = require('fs');
@@ -251,9 +251,7 @@ telegramCtrl.handlers = ()=>{
             }
             
             else if(message.group_chat_created=== true){
-                api.sendMessage({
-                    chat_id:message.chat.id,
-                    text:'Hello I´m Alexa Bot, you add me when created the group'})
+                telegramCtrl.addGroup({_id:message.chat.id, name: message.chat.title})
             }
             else if(message.text == '/addMe'){
                 User.findOne({_id: message.from.id} , function(err, user) {
