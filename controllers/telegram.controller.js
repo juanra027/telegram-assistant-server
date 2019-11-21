@@ -36,6 +36,7 @@ telegramCtrl.auth = async(req,res)=>{
         let groupsData=[];
         for (let index = 0; index < user.groups; index++) {
             let group = await Group.findOne({_id: user.groups[index]})
+            console.log(group)
             if(group){
                 groupsData.push({_id:group._id, name:group.name})
             }
@@ -196,6 +197,7 @@ telegramCtrl.handlers = ()=>{
                     text:'Hello I am the Alexa Telegram Bot. Remember that if you delete this chat'/*, all your data with me WILL BE DELETED!!!'*/})
 
             }
+            
             else if (message.text == '/delete'){
                 User.deleteOne({_id: message.from.id} , function(err, user) {
                     if(err){
