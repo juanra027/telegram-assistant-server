@@ -65,7 +65,6 @@ telegramCtrl.sendMesage = async(req,res)=>{
         else{
             res.status(402).json("Looks like you delete your chat with me, You have to register again")
         }
-        
     }
     else{
         res.status(401).json("Looks like you are not Logged In")
@@ -193,11 +192,16 @@ telegramCtrl.handlers = ()=>{
                 telegramCtrl.signUp({_id:message.chat.id, name: message.from.first_name})
 
             }
+            else if (message.text == '/code'){
+                api.sendMessage({
+                    chat_id:message.from.id,
+                    text:'Your code is: '+ message.from.id/*, all your data with me WILL BE DELETED!!!'*/})
+
+            }
             else if (message.text == '/start'){
                 api.sendMessage({
                     chat_id:message.from.id,
-                    text:'Hello I am the Alexa Telegram Bot. Remember that if you delete this chat'/*, all your data with me WILL BE DELETED!!!'*/})
-
+                    text:'Hello I am the Alexa Telegram Bot.'/*, all your data with me WILL BE DELETED!!!'*/})
             }
             
             else if (message.text == '/delete'){
