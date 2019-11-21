@@ -44,7 +44,7 @@ telegramCtrl.auth = async(req,res)=>{
             }
             
         }
-        res.status(200).json({data:{name:user.name, groups:groupsData},message:"User Logged In"})
+        res.status(200).json({data:{name:user.name, code:user._id, groups:groupsData},message:"User Logged In"})
     }
     else{
         res.status(400).json({message:"User does'nt exist"})
