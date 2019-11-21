@@ -4,12 +4,12 @@ import telegram from 'telegram-bot-api'
 import User from '../models/user.model'
 import Group from '../models/group.model'
 
-/*var api = new telegram({
+var api = new telegram({
     token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
     updates: {
         enabled: true
     }
-});*/
+});
 
 const telegramCtrl = {};
 
@@ -33,7 +33,15 @@ telegramCtrl.stopBot = (req,res)=>{
 telegramCtrl.auth = async(req,res)=>{
     let user = await User.findOne({_id: req.body.code})
     if(user){
-        res.status(200).json({data:{name:user.name},message:"User Logged In"})
+        let groupsData=[];
+        for (let index = 0; index < user.groups; index++) {
+            let group = await Group.findOne({_id: user.groups[index]})
+            if(group){
+                groupsData.push({_id:group._id, name:group.name})
+            }
+            
+        }
+        res.status(200).json({data:{name:user.name, groups:groupsData},message:"User Logged In"})
     }
     else{
         res.status(400).json({message:"User does'nt exist"})
@@ -42,11 +50,24 @@ telegramCtrl.auth = async(req,res)=>{
 
 
 
-telegramCtrl.sendMesage = (req,res)=>{
-    api.sendMessage({chat_id:req.body.chat,text:req.body.message}).then(function(data)
-    {
-        res.status(200).json("data")
-    });
+telegramCtrl.sendMesage = async(req,res)=>{
+    if (req.body.code){
+        let user = await User.findOne({_id: req.body.code})
+        if(user){
+            api.sendMessage({chat_id:req.body.chat,text:req.body.message}).then(function(data)
+            {
+                res.status(200).json("data")
+            })
+        }
+        else{
+            res.status(402).json("Looks like you delete your chat with me, You have to register again")
+        }
+        
+    }
+    else{
+        res.status(401).json("Looks like you are not Logged In")
+    }
+    
     
 };
 
@@ -135,6 +156,30 @@ telegramCtrl.signUp = async(data)=>{
     }
 }
 
+telegramCtrl.addGroup = async(data)=>{
+    let group = await Group.findOne({_id: data._id})
+    console.log(group)
+    if(group){
+        api.sendMessage({
+            chat_id:data._id,
+            text:'This group was already registered'})
+    }
+    else{
+        group = new Group(data)
+        group.save()
+        .then(group => {
+            api.sendMessage({
+                chat_id:data._id,
+                text:'Hello I´m Alexa Bot. Use /addMe if you want to use my Alexa Voice Commands'}    )
+        })
+        .catch(err => {
+            api.sendMessage({
+                chat_id:data._id,
+                text:'Error adding the group to the database'})
+        });
+    }
+}
+
 telegramCtrl.handlers = ()=>{
     api.on('message', function(message)
     {
@@ -144,6 +189,33 @@ telegramCtrl.handlers = ()=>{
             if (message.text == '/signUp'){
                 telegramCtrl.signUp({_id:message.chat.id, name: message.from.first_name})
 
+            }
+            else if (message.text == '/start'){
+                api.sendMessage({
+                    chat_id:message.from.id,
+                    text:'Hello I am the Alexa Telegram Bot. Remember that if you delete this chat'/*, all your data with me WILL BE DELETED!!!'*/})
+
+            }
+            else if (message.text == '/delete'){
+                User.deleteOne({_id: message.from.id} , function(err, user) {
+                    if(err){
+                        api.sendMessage({
+                            chat_id:message.from.id,
+                            text:'Error deleting your data'})
+                    }
+                    else if(user.n===0){
+                        console.log(user)
+                        api.sendMessage({
+                            chat_id:message.from.id,
+                            text:'You does not have data to delete'})
+                    }
+                    else{
+                        api.sendMessage({
+                            chat_id:message.from.id,
+                            text:'All your data were deleted'})
+                    }
+                })
+                
             }
             else if(message.entities && message.entities[0].type=='bot_command'){
                 api.sendMessage({
@@ -158,9 +230,16 @@ telegramCtrl.handlers = ()=>{
         }
         else{
             if(message.new_chat_participant/* && message.new_chat_participant.id === 898538517*/){
-                api.sendMessage({
-                    chat_id:message.chat.id,
-                    text:'Hello I´m Alexa Bot. Use /addMe if you want to use my Alexa Voice Commands'})
+                if(message.new_chat_participant.id === 898538517){//add new group
+
+                    telegramCtrl.addGroup({_id:message.chat.id, name: message.chat.title})
+                }
+                else{
+                    api.sendMessage({
+                        chat_id:message.chat.id,
+                        text:'Hello I´m Alexa Bot. Use /addMe if you want to use my Alexa Voice Commands'})
+                }
+
             }
             
             else if(message.group_chat_created=== true){
@@ -169,22 +248,76 @@ telegramCtrl.handlers = ()=>{
                     text:'Hello I´m Alexa Bot, you add me when created the group'})
             }
             else if(message.text == '/addMe'){
-                try {
-                    api.sendMessage({
-                        chat_id:message.from.id,
-                        text:'You were added to the group :'+ message.chat.title+ '. Now you can use my Alxa Voice Commands'})
-                } catch (error) {
-                    api.sendMessage({
-                        chat_id:message.chat.id,
-                        text:'You first need to start a private chat with me: Alexa027_bot'})
-                }
-                
+                User.findOne({_id: message.from.id} , function(err, user) {
+                    if(err){//error
+                        api.sendMessage({
+                            chat_id:message.chat.id,
+                            text:'Error looking for you in my data'})
+                    }
+                    else if(!user){//Not registered
+                        api.sendMessage({
+                            chat_id:message.from.id,
+                            text:'You first need to Register in a chat with me: Alexa027_bot'}).
+                            catch (function(error) {//not registered and no chat
+                                api.sendMessage({
+                                    chat_id:message.chat.id,
+                                    text:'Looks like you deleted the data and the chat with me :(. It is necesary to add a Group'})
+                                
+                                    /*if (error.response && error.response.statusCode === 403) {
+                                      // ...snip...
+                                    }*/
+                                })
+                    }
+                    else{
+                        if(user.groups.includes(message.chat.id)){
+                            api.sendMessage({//registered
+                                chat_id:message.from.id,
+                                text:'You already are in the group: '+ message.chat.title}).
+                                catch (function(error) {//registered but no chat
+                                    api.sendMessage({
+                                        chat_id:message.chat.id,
+                                        text:'Looks like I have your data stored but you deleted the chat with me :(. You already are in this group but you need to start a chat with me again to use it'})
+                                    
+                                        /*if (error.response && error.response.statusCode === 403) {
+                                          // ...snip...
+                                        }*/
+                                    })
+                        }
+                        else{
+                            user.groups.push(message.chat.id)
+                            User.findOneAndUpdate({_id: message.from.id}, user, {upsert:true}, function(err, doc){
+                                if (err){
+                                    api.sendMessage({
+                                        chat_id:message.chat.id,
+                                        text:'Error ocurs adding you to the group.'})
+                                }
+                                else{
+                                    api.sendMessage({//registered
+                                        chat_id:message.from.id,
+                                        text:'You were added to the group: '+ message.chat.title+ '. Now you can use my Alxa Voice Commands'}).
+                                        catch (function(error) {//registered but no chat
+                                            api.sendMessage({
+                                                chat_id:message.chat.id,
+                                                text:'Looks like I have your data stored but you deleted the chat with me :(. I added the group but you need to start a chat with me again to use it'})
+                                            
+                                                /*if (error.response && error.response.statusCode === 403) {
+                                                  // ...snip...
+                                                }*/
+                                            })
+                                }
+                            });
+                            
+                        }
+                        
+                    }
+                    
+                })
+                    
             }
         }
     });    
-    this.handlers()
+    
 }
-
-
+telegramCtrl.handlers()
 
 export default telegramCtrl

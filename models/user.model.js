@@ -11,7 +11,7 @@ let userSchema = new Schema({
         default: ''
     },
     groups:{
-        type: [{ type : Schema.ObjectId, ref: 'Group'}],
+        type: [{ type : String, ref: 'Group'}],
         default:[]
     }
 });
