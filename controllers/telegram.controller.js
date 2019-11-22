@@ -5,7 +5,7 @@ import User from '../models/user.model'
 import Group from '../models/group.model'
 
 var api = new telegram({
-    token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
+    token: "Token Secreto ;)",
     updates: {
         enabled: true
     }
@@ -15,7 +15,7 @@ const telegramCtrl = {};
 
 telegramCtrl.startBot = (req,res)=>{
     api = new telegram({
-        token: "898538517:AAFEBZg0cKB-F7KtI21S3NMVnn8D65Rot8g",
+        token: "Token Secreto ;)",
         updates: {
             enabled: true
     }
